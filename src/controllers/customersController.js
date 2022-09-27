@@ -43,7 +43,7 @@ export async function updateCustomer(req, res) {
     }
 
     try {
-        await connection.query('UPDATE usuarios SET name = $1, phone = $2, cpf = $3, birthday = $4,  WHERE id = $5', [name, phone, cpf, birthday, id]);
+        await connection.query('UPDATE customer SET name = $1, phone = $2, cpf = $3, birthday = $4,  WHERE id = $5', [name, phone, cpf, birthday, id]);
         res.status(200).send("customer atualizado com sucesso");
     } catch (error) {
         res.status(500).send(error);
