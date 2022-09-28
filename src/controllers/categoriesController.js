@@ -30,7 +30,7 @@ export async function postCategories(req, res) {
         if (categories.length > 0) {
             return res.status(409).send("categoria ja existe")
         }        
-        connection.query('INSERT INTO categories (name) VALUES ($1)', [name]);
+        await connection.query('INSERT INTO categories (name) VALUES ($1)', [name]);
         res.status(201).send("categoria criada com sucesso")
     } catch (error) {
         res.status(500).send(error.message);

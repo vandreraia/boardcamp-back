@@ -3,7 +3,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get('/rentals', getrentals);
-router.post('/rentals', postrentals);
+router.get('/rentals', getRentals);
+router.post('/rentals', postRentals);
 
 export default router;

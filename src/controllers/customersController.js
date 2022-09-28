@@ -24,7 +24,7 @@ export async function getCustomersById(req, res) {
     const { id } = req.params;
 
     try {
-        const { rows: customers } = await connection.query('SELECT * FROM customers where id = $1', [id]);
+        const { rows: customers } = await connection.query('SELECT * FROM customers WHERE id = $1', [id]);
         res.status(200).send(customers);
     } catch (error) {
         res.status(500).send(error);
@@ -84,13 +84,13 @@ export async function postCustomers(req, res) {
         if (searchCpf.length > 0) {
             return res.status(409).send("cpf duplicado");
         }
+        connection.query('INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)', [name, phone, cpf, birthday]);
+        res.status(201).send("user criado com sucesso")
     } catch (error) {
         res.status(500).send("erro ao procurar user na database");
         return;
 
     }
 
-    connection.query('INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)', [name, phone, cpf, birthday]);
-    res.status(201).send("user criado com sucesso")
 
 }

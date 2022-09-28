@@ -5,7 +5,6 @@ export async function getGames(req, res) {
     let { name } = req.query;
 
     try {
-
         if (name) {
             name = name.toLowerCase();
             name += "%";
@@ -50,17 +49,10 @@ export async function postGames(req, res) {
         if (id.length === 0) {
             return res.status(400).send("id nao existe");
         }
-
-        console.log(name);
-        console.log(gameName);
-        
-        connection.query('INSERT INTO games ("name", "image", "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5)', [name, image, stockTotal, categoryId, pricePerDay]);
+        await connection.query('INSERT INTO games ("name", "image", "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5)', [name, image, stockTotal, categoryId, pricePerDay]);
         res.status(201).send("jogo criado com sucesso")
     } catch (error) {
         res.status(500).send(error.message);
         return;
-
     }
-
-
 }
