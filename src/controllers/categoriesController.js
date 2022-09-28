@@ -27,7 +27,7 @@ export async function postCategories(req, res) {
 
     try {
         const { rows: categories } = await connection.query('SELECT * FROM categories WHERE name = $1', [name]);
-        if (categories > 0) {
+        if (categories.length > 0) {
             return res.status(409).send("categoria ja existe")
         }        
         connection.query('INSERT INTO categories (name) VALUES ($1)', [name]);
