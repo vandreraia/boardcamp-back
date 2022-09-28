@@ -4,12 +4,11 @@ import connection from "../db/postgres.js";
 export async function getGames(req, res) {
     let { name } = req.query;
 
-    name = name.toLowerCase();
-    name += "%";
-    console.log(name)
     try {
 
         if (name) {
+            name = name.toLowerCase();
+            name += "%";
             const { rows: games } = await connection.query('SELECT * FROM games WHERE LOWER(name) LIKE $1', [name]);
             res.status(200).send(games);
         } else {
