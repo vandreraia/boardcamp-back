@@ -67,3 +67,58 @@ export async function postRentals(req, res) {
         return;
     }
 }
+
+export async function finalizeRentals(req, res) {
+    const now = dayjs().format("YYYY-MM-DD");
+    const { id } = req.params;
+
+    try {
+        const { rowCount: existId } = await connection.query('SELECT * FROM customers WHERE id = $1', [id]);
+
+        if (existId === 0) {
+            return res.status(404).send("user nao encontrado");
+        }
+
+        const { rows } = await connection.query('SELECT * FROM rentals WHERE id = $1', [id]);
+
+        if (rows[0].returnDate) {
+            return res.status(400).send("produto ja finalizado");
+        }
+        const { rows: gameRow } = await connection.query('SELECT * FROM games WHERE id = $1', [id]);
+        const rentDate = dayjs(rows[0].rentDate);
+        const due = rentDate.add(rows[0].daysRented, 'day');
+        let diff = (rentDate.diff(due, 'day'));
+        diff *= (gameRow[0].pricePerDay);
+        if (diff < 0) {
+            diff = 0;
+        }
+        await connection.query('UPDATE rentals SET "delayFee" = $1, "returnDate" = $2 WHERE id = $3', [diff, now, id]);
+        
+        return res.status(200).send("fanilizado");
+    } catch (error) {
+
+    }
+}
+
+export async function deleteRentals(req, res) {
+    const { id } = req.params;
+
+    try {
+        const { rows } = await connection.query('SELECT * FROM rentals WHERE id = $1', [id]);
+        const { rowCount: existId } = await connection.query('SELECT * FROM customers WHERE id = $1', [rows[0].customerId]);
+        if (existId === 0) {
+            return res.status(404).send("user nao encontrado");
+        }
+        if (rows[0].returnDate) {
+            return res.status(400).send("produto ja finalizado");
+        }
+        console.log(existId)
+
+        await connection.query('DELETE FROM rentals WHERE id = $1', [id]);
+
+        return res.status(200).send("deletado")
+    } catch (error) {
+        
+    }
+
+}
