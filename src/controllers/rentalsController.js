@@ -6,9 +6,18 @@ export async function getRentals(req, res) {
 
     try {
         const { rows: rentals } = await connection.query('SELECT * FROM rentals');
+        let destruct= [];
+        for (let i = 0; i < rentals.length; i++) {
+            let {rows: customer} = await connection.query('SELECT id, name FROM customers WHERE id = $1', [rentals[i]["customerId"]]);
+            let {rows: game} = await connection.query('SELECT id, name, "categoryId" FROM games WHERE id = $1', [rentals[i]["gameId"]]);
+            game = game[0];
+            customer = customer[0]
+            destruct.push({...rentals[i], customer, game})
+            console.log(destruct[i])
+        }
         res.status(200).send(rentals);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).send(error.message);
     }
 }
 
