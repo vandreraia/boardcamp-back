@@ -20,10 +20,9 @@ export async function getRentals(req, res) {
 
         let destruct = [];
         for (let i = 0; i < rentals.length; i++) {
-            let { rows: customer } = await connection.query('SELECT id, name FROM customers WHERE id = $1', [rentals[i]["customerId"]]);
-            let { rows: game } = await connection.query('SELECT id, name, "categoryId" FROM games WHERE id = $1', [rentals[i]["gameId"]]);
-            game = game[0];
-            customer = customer[0]
+            let customer = (await connection.query('SELECT id, name FROM customers WHERE id = $1', [rentals[i]["customerId"]])).rows[0];
+            let game = (await connection.query('SELECT games.id, games.name, "categoryId", categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id WHERE games.id = $1', [rentals[i]["gameId"]])).rows[0];
+
             destruct.push({ ...rentals[i], customer, game })
         }
         res.status(200).send(destruct);
